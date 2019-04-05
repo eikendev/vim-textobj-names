@@ -1,0 +1,29 @@
+*textobj-names.txt*	Text objects for source code names
+
+Version: 0.0.2
+Author: eikendev
+License: MIT
+
+===============================================================================
+CONTENTS					*textobj-names-contents*
+
+Introduction		|textobj-names-introduction|
+
+===============================================================================
+INTRODUCTION					*textobj-names-introduction*
+
+The *textobj-names* plugin provides a few new |text-objects| for working with
+names in source code. You can use them when you have to deal with names that
+are separated by delimiters like `-`, `_`, `/`.
+
+Here is an example for a situation this plugin might help you in. In your
+source code, you have a variable name like `my-old-name`. Let's suppose you
+have to change `old` to `new` (\| for cursor position). Using this plugin, you
+can do the following. `my-o|ld-name` and type `ci-` to get `my-|-name` from
+where you can insert `new`. Or you can type `da-` to get `my|name`.
+
+Similarly, the name could have been `my/old/name` or `my_old_name`, in which
+case you would have to type `ci/` or `ci_` respectively.
+
+===============================================================================
+vim:tw=78:ts=8:ft=help:norl:
