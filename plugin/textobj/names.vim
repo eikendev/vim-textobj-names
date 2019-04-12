@@ -4,7 +4,7 @@ else
 	let g:loaded_textobj_names = 1
 endif
 
-call textobj#user#plugin('things', {
+call textobj#user#plugin('names', {
 \	'underscore': {
 \		'*sfile*': expand('<sfile>:p'),
 \		'select-a': 'a_', '*select-a-function*': 's:underscore_select_a',
@@ -27,53 +27,40 @@ call textobj#user#plugin('things', {
 \	},
 \})
 
-let s:border_chars_inc = '_\-#/'
-let s:border_chars_exc = '[:space:][:punct:]'
-let s:total_pattern = '\|^\|$\|[' . s:border_chars_exc . s:border_chars_inc . ']'
+let s:inner_pattern = '[^a-zA-Z0-9]'
 
 function! <SID>search_head(char, inner) abort
-	let l:pos = searchpos(a:char . s:total_pattern, 'bcnW', line('.'))
-
 	if a:inner
-		if l:pos[1] != 1
-			let l:pos = [l:pos[0], l:pos[1] + 1]
-		endif
+		let l:pos = searchpos(s:inner_pattern, 'bcnW', line('.'))
 	else
-		let l:matched_char = getline(l:pos[0])[l:pos[1] - 1]
+		let l:pos = searchpos('[^' . a:char . ']' . a:char . '\|[^a-zA-Z0-9' . a:char . ']', 'bcnW', line('.'))
+	endif
 
-		if l:matched_char =~ '[' . a:char . s:border_chars_inc . ']'
-			" Do not change head.
-			let l:pos = l:pos
-		elseif l:matched_char =~ '[' . s:border_chars_exc . ']'
-			let l:pos = [l:pos[0], l:pos[1] + 1]
-		endif
+	if l:pos[0] == 0
+		let l:pos = [line('.'), 1]
+	else
+		let l:pos[1] = l:pos[1] + 1
 	endif
 
 	return [0] + l:pos + [0]
 endfunction
 
 function! <SID>search_tail(char, inner) abort
-	" TODO Match a:char greedily.
-	let l:pos = searchpos(a:char . s:total_pattern, 'nzW', line('.'))
-	let l:line_len = len(getline(l:pos[0]))
-
-	if l:pos[1] >= l:line_len
-		" Limit the tail to the end of the line.
-		let l:pos = [l:pos[0], l:line_len]
-	elseif a:inner
-		let l:pos = [l:pos[0], l:pos[1] - 1]
+	if a:inner
+		let l:pos = searchpos(s:inner_pattern, 'nzW', line('.'))
 	else
-		let l:matched_char = getline(l:pos[0])[l:pos[1] - 1]
+		let l:pos = searchpos(a:char . '[^' . a:char . ']\|[^a-zA-Z0-9' . a:char . ']', 'nzW', line('.'))
 
-		if l:matched_char =~ '[' . a:char . s:border_chars_inc . ']'
-			" Do not change tail.
-			let l:pos = l:pos
-		elseif l:matched_char =~ '[' . s:border_chars_exc . ']'
-			let l:pos = [l:pos[0], l:pos[1] - 1]
-		elseif l:matched_char ==# ''
-			" Prevent the next line from getting joined.
-			let l:pos = [l:pos[0], l:pos[1] - 1]
+		" In case we matched the first option, we have to adjust the position.
+		if getline(l:pos[0])[l:pos[1] - 1] == a:char
+			let l:pos[1] = l:pos[1] + 1
 		endif
+	endif
+
+	if l:pos[0] == 0
+		let l:pos = [line('.'), len(getline(line('.')))]
+	else
+		let l:pos[1] = l:pos[1] - 1
 	endif
 
 	return [0] + l:pos + [0]
