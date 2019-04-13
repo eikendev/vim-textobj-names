@@ -25,6 +25,11 @@ call textobj#user#plugin('names', {
 \		'select-a': 'a/', '*select-a-function*': 's:slash_select_a',
 \		'select-i': 'i/', '*select-i-function*': 's:slash_select_i',
 \	},
+\	'at': {
+\		'*sfile*': expand('<sfile>:p'),
+\		'select-a': 'a@', '*select-a-function*': 's:at_select_a',
+\		'select-i': 'i@', '*select-i-function*': 's:at_select_i',
+\	},
 \})
 
 let s:inner_pattern = '[^a-zA-Z0-9]'
@@ -103,4 +108,12 @@ endfunction
 
 function! s:slash_select_i()
 	return <SID>search_wrapper('/', 1)
+endfunction
+
+function! s:at_select_a()
+	return <SID>search_wrapper('@', 0)
+endfunction
+
+function! s:at_select_i()
+	return <SID>search_wrapper('@', 1)
 endfunction

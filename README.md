@@ -2,7 +2,7 @@ Usage
 -----
 
 The textobj-names plugin provides a few new text-objects for working with names in source code.
-You can use them when you have to deal with names that are separated by delimiters like `-`, `_`, `/` or `#`.
+You can use them when you have to deal with names that are separated by delimiters like `-`, `_`, `/`, `@` or `#`.
 
 Here is an example for a situation this plugin might help you in.
 In your source code, you have a variable name like `my-old-name`.
